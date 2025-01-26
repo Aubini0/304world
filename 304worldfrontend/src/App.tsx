@@ -1,222 +1,129 @@
-import React from 'react';
-import { Search, Camera, Play, MessageCircle, Sparkles, Download, Grid, QrCode, ChevronDown, MoreVertical, Link2, Globe, Users, Compass, Star } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <Camera className="w-8 h-8" />
-              <div className="relative flex-1 md:flex-initial">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="bg-gray-800 rounded-full py-2 pl-10 pr-4 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
-              </div>
-            </div>
-            
-            <nav className="flex items-center gap-4 md:gap-8 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-              <a href="#" className="flex items-center gap-2 whitespace-nowrap">
-                <div className="w-6 h-6"><img src="/vite.svg" alt="Stories" /></div>
-                <span>Stories</span>
-              </a>
-              <a href="#" className="flex items-center gap-2 whitespace-nowrap">
-                <Play className="w-6 h-6" />
-                <span>Spotlight</span>
-              </a>
-              <a href="#" className="flex items-center gap-2 whitespace-nowrap">
-                <MessageCircle className="w-6 h-6" />
-                <span>Chat</span>
-              </a>
-              <a href="#" className="flex items-center gap-2 whitespace-nowrap">
-                <Sparkles className="w-6 h-6" />
-                <span className="flex items-center">
-                  Lenses
-                  <span className="ml-1 bg-blue-500 text-xs px-1 rounded">NEW</span>
-                </span>
-              </a>
-            </nav>
+  const [posts, setPosts] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-            <div className="flex items-center gap-4">
-              <QrCode className="w-6 h-6 hidden md:block" />
-              <Grid className="w-6 h-6 hidden md:block" />
-              <button className="bg-white text-black font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition-colors">
-                Download
-              </button>
+  // Load initial posts and setup scroll listener
+  useEffect(() => {
+    setTimeout(() => {
+      setPosts(Array.from({ length: 5 }, (_, i) => i + 1));
+      setIsLoading(false);
+    }, 2000);
+
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= 
+          document.documentElement.offsetHeight - 100) {
+        setPosts(prev => [...prev, ...Array.from({ length: 3 }, (_, i) => prev.length + i + 1)]);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Skeleton Loaders
+  const PostSkeleton = () => (
+    <div className="mb-6 bg-gray-800 rounded-xl p-6 animate-pulse">
+      <div className="h-6 bg-gray-700 rounded w-1/2 mb-4" />
+      <div className="h-4 bg-gray-700 rounded w-full mb-2" />
+      <div className="h-4 bg-gray-700 rounded w-3/4" />
+    </div>
+  );
+
+  const SidebarSkeleton = () => (
+    <div className="bg-gray-800 rounded-xl p-4 mb-4 animate-pulse">
+      <div className="h-5 bg-gray-700 rounded w-2/3 mb-3" />
+      <div className="h-3 bg-gray-700 rounded w-full" />
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-gray-100">
+      {/* Fixed Header */}
+      <header className="fixed top-0 w-full bg-gray-900 z-50 p-4 border-b border-gray-800">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="pl-12 pr-4 py-2 bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-gray-600 w-64"
+              />
             </div>
           </div>
+          <button className="bg-gray-800 hover:bg-gray-700 px-6 py-2 rounded-full text-sm font-medium">
+            Donate
+          </button>
         </div>
       </header>
 
-      {/* Advertisement Container */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="bg-gray-900 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-gray-400">Advertisement</span>
-            <button className="text-xs text-gray-400 hover:text-white">×</button>
-          </div>
-          <div className="bg-gray-800 rounded-lg h-24 flex items-center justify-center">
-            <span className="text-gray-500">Ad Space Available</span>
+      <main className="pt-16 flex">
+        {/* Left Navigation */}
+        <div className="w-64 p-6 border-r border-gray-800 fixed h-full">
+          <h2 className="text-xl font-bold mb-6">Navigation</h2>
+          <div className="space-y-4">
+            <button className="w-full text-left p-3 hover:bg-gray-800 rounded-lg">Home</button>
+            <button className="w-full text-left p-3 hover:bg-gray-800 rounded-lg">Popular</button>
+            <button className="w-full text-left p-3 hover:bg-gray-800 rounded-lg">Following</button>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-3">
-            <div className="bg-gray-900 rounded-xl p-6 space-y-6">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Popular Creators
-              </h2>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full" />
-                    <div>
-                      <p className="font-semibold">Creator {i}</p>
-                      <p className="text-sm text-gray-400">@creator{i}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="text-blue-400 text-sm hover:underline w-full text-center">
-                View All Creators
-              </button>
-            </div>
-
-            <div className="mt-6 bg-gray-900 rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Star className="w-5 h-5" />
-                Trending
-              </h2>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg" />
-                    <div>
-                      <p className="font-semibold">Trending Topic {i}</p>
-                      <p className="text-sm text-gray-400">{i}K views</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Main Content */}
+        <div className="ml-64 mr-80 flex-1 p-6 min-h-screen">
+          <div className="max-w-2xl mx-auto">
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => <PostSkeleton key={i} />)
+            ) : (
+              posts.map(post => (
+                <div key={post} className="mb-6 bg-gray-800 rounded-xl p-6">
+                  <h2 className="text-2xl font-bold mb-4">Post {post}</h2>
+                  <p className="text-gray-400">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                </div>
+              ))
+            )}
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-6">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
-                <Globe className="w-6 h-6 text-black" />
+        {/* Right Sidebar */}
+        <div className="w-80 p-6 border-l border-gray-800 fixed right-0 h-full">
+          <h2 className="text-xl font-bold mb-6">Recommended</h2>
+          
+          {/* Sponsored Content */}
+          {isLoading ? (
+            <SidebarSkeleton />
+          ) : (
+            <div className="bg-gray-800 rounded-xl p-4 mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold">Sponsored Content</h3>
+                <span className="text-xs text-gray-400">Ad</span>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold">Snap Spotlight</h2>
-                <p className="text-gray-400">Discover The Latest Stories From Top Snap Creators.</p>
-              </div>
+              <p className="text-gray-400 text-sm">
+                Discover amazing products that enhance your experience
+              </p>
             </div>
+          )}
 
-            <div className="bg-gray-900 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Globe className="w-6 h-6" />
-                <span className="font-semibold">World Vibe</span>
-                <span className="text-gray-400 hidden md:inline">View more episodes »</span>
-              </div>
-
-              <div className="relative aspect-video bg-gray-800 rounded-lg">
-                <img
-                  src="https://images.unsplash.com/photo-1600096194534-95cf5ece04cf"
-                  alt="Featured Story"
-                  className="w-full h-full object-cover rounded-lg"
-                />
-                <div className="absolute bottom-4 right-4 flex gap-2">
-                  <button className="p-2 bg-gray-800/80 rounded-full">
-                    <MoreVertical className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 bg-gray-800/80 rounded-full">
-                    <Link2 className="w-5 h-5" />
-                  </button>
+          {/* Recommended Content */}
+          <div className="space-y-4">
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => <SidebarSkeleton key={i} />)
+            ) : (
+              ['Trending discussions', 'New community highlights', 'Popular stories'].map((text, i) => (
+                <div key={i} className="bg-gray-800 rounded-xl p-4">
+                  <h3 className="font-bold mb-2">Recommended Post {i + 1}</h3>
+                  <p className="text-gray-400 text-sm">{text} in your network</p>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="lg:col-span-3">
-            <div className="bg-gray-900 rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Compass className="w-5 h-5" />
-                Discover
-              </h2>
-              <div className="space-y-4">
-                {/* Mehndi Art Story */}
-                <div className="group cursor-pointer">
-                  <img
-                    src="https://images.unsplash.com/photo-1581234794335-bb0c77c13b1a"
-                    alt="Mehndi Art"
-                    className="w-full h-32 object-cover rounded-lg mb-2"
-                  />
-                  <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="font-semibold group-hover:text-yellow-400">Mehndi Art</span>
-                  </div>
-                </div>
-
-                {/* Recent Story */}
-                <div className="group cursor-pointer">
-                  <img
-                    src="https://images.unsplash.com/photo-1517849845537-4d257902454a"
-                    alt="Recent Story"
-                    className="w-full h-32 object-cover rounded-lg mb-2"
-                  />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold group-hover:text-yellow-400">jbjhanceboyz</span>
-                      <span className="text-yellow-400">⭐</span>
-                    </div>
-                    <span className="text-sm text-gray-400">11h ago</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 bg-gray-900 rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5" />
-                Recent Activity
-              </h2>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-full" />
-                    <div>
-                      <p className="font-semibold">User {i}</p>
-                      <p className="text-sm text-gray-400">Posted a new story</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-800 mt-8">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4 text-sm text-gray-400">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Terms of Service</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
