@@ -81,6 +81,15 @@ function App() {
             <button className="w-full text-left p-3 hover:bg-gray-800 rounded-lg">
               Following
             </button>
+            <button className="w-full text-left p-3 hover:bg-gray-800 rounded-lg">
+              <a
+                href="https://scintillating-cannoli-2bf561.netlify.app/"
+                target="_blank"
+                className="w-full h-full inline-block"
+              >
+                Upload
+              </a>
+            </button>
           </div>
         </div>
 
